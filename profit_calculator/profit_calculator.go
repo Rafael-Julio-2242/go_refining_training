@@ -8,22 +8,38 @@ func main() {
 	var expenses float64
 	var taxRate float64
 
-	fmt.Print("Enter revenue: ")
-	fmt.Scan(&revenue)
+	revenue = getUserInput("Enter Revenue: ")
 
-	fmt.Print("Enter expenses: ")
-	fmt.Scan(&expenses)
+	expenses = getUserInput("Enter expenses: ")
 
-	fmt.Print("Enter tax rate: ")
-	fmt.Scan(&taxRate)
+	taxRate = getUserInput("Enter Tax Rate: ")
 
-	ebt := revenue - expenses
-	profit := ebt * (1 - taxRate)
+	ebt, profit, ratio := calculate(revenue, expenses, taxRate)
 
-	ratio := ebt / profit
+	fullMessage := createOutputMessage(ebt, profit, ratio)
 
-	fmt.Printf("EBT: %.2f\n", ebt)
-	fmt.Printf("Profit: %.2f\n", profit)
-	fmt.Printf("Ratio: %.2f\n", ratio)
+	fmt.Println(fullMessage)
+}
 
+func getUserInput(message string) (userInput float64) {
+	fmt.Print(message)
+	fmt.Scan(&userInput)
+	return userInput
+}
+
+func calculate(revenue float64, expenses float64, taxRate float64) (ebt float64, profit float64, ratio float64) {
+	ebt = revenue - expenses
+	profit = ebt * (1 - taxRate)
+	ratio = ebt / profit
+	return ebt, profit, ratio
+}
+
+func createOutputMessage(ebt float64, profit float64, ratio float64) (message string) {
+	message = fmt.Sprintf(`
+EBT: %.2f
+Profit: %.2f
+Ratio: %.2f
+	`, ebt, profit, ratio)
+
+	return message
 }
