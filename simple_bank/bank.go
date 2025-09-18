@@ -1,11 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
 
 func main() {
 
 	var currentBalance float64
 	var exit bool = false
+
+	currentBalance, err := readBalanceFromFile()
+
+	if err != nil {
+		fmt.Println("Error reading balance from file: ", err)
+		panic("Can't continue...")
+	}
 
 	for {
 
@@ -64,6 +75,7 @@ func depositMoney(currentBalance float64) (newBalance float64) {
 
 	fmt.Println("Depoisted ", amount)
 	fmt.Println("New Balance is ", newBalance)
+	writeBalanceToFile(newBalance)
 	return newBalance
 }
 
@@ -82,5 +94,28 @@ func withdrawMoney(currentBalance float64) (newBalance float64) {
 	newBalance -= amount
 	fmt.Printf("Withdrawed %v\n", amount)
 	fmt.Printf("New Balance is %v\n", newBalance)
+	writeBalanceToFile(newBalance)
 	return newBalance
+}
+
+func writeBalanceToFile(balance float64) {
+	balanceText := fmt.Sprint(balance)
+	os.WriteFile("balance.txt", []byte(balanceText), 0644)
+}
+
+func readBalanceFromFile() (balance float64, err error) {
+	bytes, err := os.ReadFile("balance.txt")
+
+	if err != nil {
+		return 0.0, err
+	}
+
+	balanceText := string(bytes)
+	balance, err = strconv.ParseFloat(balanceText, 64)
+
+	if err != nil {
+		return 0.0, err
+	}
+
+	return balance, nil
 }
