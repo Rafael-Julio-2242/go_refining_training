@@ -6,12 +6,16 @@ func main() {
 
 	age := 32
 
-	fmt.Println("Age: ", age)
+	agePointer := &age
 
-	fmt.Println("Adult Years: ", getAdultYears(age))
+	fmt.Println("Age: ", *agePointer)
+
+	editAgeToAdultYears(agePointer)
+
+	fmt.Println("Adult Years: ", age)
 
 }
 
-func getAdultYears(age int) int {
-	return age - 18
+func editAgeToAdultYears(age *int) {
+	*age -= 18
 }
