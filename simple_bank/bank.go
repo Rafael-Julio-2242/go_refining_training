@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strconv"
+	"go-simple-bank/fileops"
 )
 
 func main() {
@@ -11,7 +10,7 @@ func main() {
 	var currentBalance float64
 	var exit bool = false
 
-	currentBalance, err := readBalanceFromFile()
+	currentBalance, err := fileops.ReadFloatFromFile("balance.txt")
 
 	if err != nil {
 		fmt.Println("Error reading balance from file: ", err)
@@ -24,7 +23,7 @@ func main() {
 			break
 		}
 
-		menu := generateMenu()
+		menu := GenerateMenu()
 		fmt.Println(menu)
 
 		var action int
@@ -49,19 +48,6 @@ func main() {
 
 }
 
-func generateMenu() (menu string) {
-	menu = fmt.Sprintf(`
-Welcome to Go Bank!
-What do you want to do?
-1. Check balance
-2. Deposit Money
-3. Withdraw Money
-4. Exit
-	`)
-
-	return menu
-}
-
 func showBalance(balance float64) {
 	fmt.Println("Your balance is ", balance)
 }
@@ -75,7 +61,7 @@ func depositMoney(currentBalance float64) (newBalance float64) {
 
 	fmt.Println("Depoisted ", amount)
 	fmt.Println("New Balance is ", newBalance)
-	writeBalanceToFile(newBalance)
+	fileops.WriteFloatToFile("balance.txt", newBalance)
 	return newBalance
 }
 
@@ -94,28 +80,6 @@ func withdrawMoney(currentBalance float64) (newBalance float64) {
 	newBalance -= amount
 	fmt.Printf("Withdrawed %v\n", amount)
 	fmt.Printf("New Balance is %v\n", newBalance)
-	writeBalanceToFile(newBalance)
+	fileops.WriteFloatToFile("balance.txt", newBalance)
 	return newBalance
-}
-
-func writeBalanceToFile(balance float64) {
-	balanceText := fmt.Sprint(balance)
-	os.WriteFile("balance.txt", []byte(balanceText), 0644)
-}
-
-func readBalanceFromFile() (balance float64, err error) {
-	bytes, err := os.ReadFile("balance.txt")
-
-	if err != nil {
-		return 0.0, err
-	}
-
-	balanceText := string(bytes)
-	balance, err = strconv.ParseFloat(balanceText, 64)
-
-	if err != nil {
-		return 0.0, err
-	}
-
-	return balance, nil
 }
