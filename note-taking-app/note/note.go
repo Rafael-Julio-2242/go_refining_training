@@ -31,7 +31,7 @@ func New(title, content string) (*Note, error) {
 	}, nil
 }
 
-func (n *Note) ShowNoteInfo() {
+func (n *Note) Display() {
 	fmt.Printf("\n\nTitle: %v\nContent: %v\n\n", n.Title, n.Content)
 }
 

@@ -18,7 +18,7 @@ func New(text string) *Todo {
 	}
 }
 
-func (t *Todo) ShowNoteInfo() {
+func (t *Todo) Display() {
 	fmt.Println(t.Text)
 }
 

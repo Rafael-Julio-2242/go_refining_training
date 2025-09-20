@@ -4,9 +4,19 @@ import (
 	"bufio"
 	"fmt"
 	"go-note-taking-app/note"
+	"go-note-taking-app/todo"
 	"os"
 	"strings"
 )
+
+type saver interface {
+	SaveFile() error
+}
+
+type outputtable interface {
+	saver
+	Display()
+}
 
 func main() {
 
@@ -23,24 +33,47 @@ func main() {
 		fmt.Println("Content error: ", contentErr)
 	}
 
+	todoText, todoErr := getUserInput("Todo Text: ")
+
 	userNote, noteErr := note.New(title, content)
 
 	if noteErr != nil {
 		panic(noteErr)
 	}
 
-	userNote.ShowNoteInfo()
+	if todoErr != nil {
+		panic(todoErr)
+	}
 
-	fmt.Println("Saving note...")
+	userTodo := todo.New(todoText)
 
-	err := userNote.SaveFile()
+	userNoteError := outputData(userNote)
+	userTodoError := outputData(userTodo)
 
-	if err != nil {
-		panic("Error saving note: " + err.Error())
+	if userNoteError != nil {
+		panic(userNoteError)
+	}
+
+	if userTodoError != nil {
+		panic(userTodoError)
 	}
 
 	fmt.Println("Note Saved!")
+}
 
+func outputData(data outputtable) error {
+	data.Display()
+	return data.SaveFile()
+}
+
+func Save(sv saver) error {
+	err := sv.SaveFile()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getUserInput(prompt string) (string, error) {
