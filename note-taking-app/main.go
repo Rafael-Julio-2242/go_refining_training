@@ -1,8 +1,11 @@
 package main
 
 import (
-	"errors"
+	"bufio"
 	"fmt"
+	"go-note-taking-app/note"
+	"os"
+	"strings"
 )
 
 func main() {
@@ -20,18 +23,39 @@ func main() {
 		fmt.Println("Content error: ", contentErr)
 	}
 
-	fmt.Println(title, content)
+	userNote, noteErr := note.New(title, content)
+
+	if noteErr != nil {
+		panic(noteErr)
+	}
+
+	userNote.ShowNoteInfo()
+
+	fmt.Println("Saving note...")
+
+	err := userNote.SaveFile()
+
+	if err != nil {
+		panic("Error saving note: " + err.Error())
+	}
+
+	fmt.Println("Note Saved!")
 
 }
 
 func getUserInput(prompt string) (string, error) {
 	fmt.Print(prompt)
-	var value string
-	fmt.Scanln(&value)
 
-	if value == "" {
-		return "", errors.New("invalid input")
+	reader := bufio.NewReader(os.Stdin)
+
+	value, err := reader.ReadString('\n')
+
+	if err != nil {
+		return "", err
 	}
+
+	value = strings.TrimSuffix(value, "\n")
+	value = strings.TrimSuffix(value, "\r")
 
 	return value, nil
 }
